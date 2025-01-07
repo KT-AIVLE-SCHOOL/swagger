@@ -1,0 +1,20 @@
+{
+  "name": "server_app",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "jaehjoo",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "jsonwebtoken": "^9.0.2",
+    "yamljs": "^0.3.0"
+  }
+}

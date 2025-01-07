@@ -1,0 +1,63 @@
+LoginParameters:
+  - in: cookie
+    name: accessToken
+    schema:
+      type: string
+    required: true
+    description: 액세스 토큰
+  - in: cookie
+    name: refreshToken
+    schema:
+      type: string
+    required: true
+    description: 리프레시 토큰
+
+LoginSuccessResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+
+ErrorResponseInvalidToken:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: 불량 토큰
+
+ErrorResponseExpiredToken:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: 토큰 기한 초과
+
+ErrorResponseGenerateAccessToken:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: 토큰 교환
+    accessToken:
+      type: string
+      example: abc
+
+ErrorResponseServer:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: Internal server error

@@ -1,0 +1,27 @@
+post:
+  summary: 신규 사용자 등록
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/register.yml#/NewUserRequest'
+  responses:
+    '200':
+      description: 사용자 등록 성공
+      content:
+        application/json:
+          schema:
+            $ref: '../components/register.yml#/NewUserSuccessResponse'
+    '400':
+      description: 유효하지 않은 로그인 수단
+      content:
+        application/json:
+          schema:
+            $ref: '../components/register.yml#/ErrorResponseInvaildRegister'
+    '500':
+      description: 내부 서버 문제
+      content:
+        application/json:
+          schema:
+            $ref: '../components/register.yml#/ErrorResponseServer'

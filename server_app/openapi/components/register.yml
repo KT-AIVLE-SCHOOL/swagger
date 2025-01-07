@@ -1,0 +1,59 @@
+NewUserRequest:
+  type: object
+  properties:
+    username:
+      type: string
+    childname:
+      type: string
+    email:
+      type: string
+    password:
+      type: string
+      description: |
+        소셜 계정인 경우, 소셜 인증 시 받은 accessToken 값을 기록해주세요
+    method:
+      type: integer
+      enum: [0, 1]
+      description: |
+        사용자 등록 방식을 나타내는 정수값
+        - 0: 일반 계정 등록
+        - 1: 소셜 계정 등록
+  required:
+    - username
+    - childname
+    - email
+    - password
+    - method
+
+NewUserSuccessResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    accessToken:
+      type: string
+      example: abc
+    refreshToken:
+      type: string
+      example: abc
+
+ErrorResponseInvaildRegister:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: 유효하지 않은 로그인 수단
+
+ErrorResponseServer:
+  type: object
+  properties:
+    success:
+      type: boolean
+      exampe: false
+    message:
+      type: string
+      example: 내부 서버 오류

@@ -1,0 +1,16 @@
+openapi: 3.0.0
+info:
+  title: kt-aivle-bigProject
+  version: 0.2.0
+  description: 6반 18조 swagger입니다
+
+servers:
+  - url: http://localhost:3000/api
+
+paths:
+  /hello:
+    $ref: './openapi/paths/hello.yml'
+  /auth/login:
+    $ref: './openapi/paths/login.yml'
+  /auth/register:
+    $ref: './openapi/paths/register.yml'
