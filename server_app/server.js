@@ -19,6 +19,10 @@ SwaggerParser.bundle(swaggerDocument, {
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(bundledSpec));
 });
 
+app.get('/', (req, res) => {
+    res.redirect('/api-docs');
+})
+
 app.get('/api/hello', (req, res) => {
     res.json({success: true});
 });
@@ -26,5 +30,5 @@ app.get('/api/hello', (req, res) => {
 app.use('/api/auth', authRoutes);
 
 app.listen(port, () => {
-    console.log(`서버가 http://localhost:${port}에서 실행 중입니다.`);
+    console.log(`서버가 실행 중입니다.`);
 });
