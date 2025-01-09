@@ -4,6 +4,9 @@ const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const path = require('path');
 const app = express();
+const bodyParser = require('body-parser');
+const fs = require('fs');
+const wav = require('wav');
 const authRoutes = require('./routes/authRoutes');
 const port = 3000;
 
@@ -25,6 +28,24 @@ app.get('/', (req, res) => {
 
 app.get('/api/hello', (req, res) => {
     res.json({success: true});
+});
+
+app.use(bodyParser.raw({type: 'application/octet-stream', limit: '10mb'}));
+
+app.post('/api/uploadAudio', (req, res) => {
+    const audioData = req.body;
+
+    const writer = new wav.FileWriter('recorded_audio.wav', {
+        channels: 1,
+        sampleRate: 16000,
+        bitDepth: 16
+    });
+
+    writer.write(audioData);
+    writer.end();
+
+    console.log('Audio data received and saved as WAV file');
+    res.sendStatus(200);
 });
 
 app.use('/api/auth', authRoutes);
