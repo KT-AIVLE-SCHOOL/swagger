@@ -30,6 +30,8 @@ app.get('/api/hello', (req, res) => {
     res.json({success: true});
 });
 
+app.use('/api/auth', authRoutes);
+
 app.use(bodyParser.raw({type: 'application/octet-stream', limit: '10mb'}));
 
 app.post('/api/uploadAudio', (req, res) => {
@@ -47,8 +49,6 @@ app.post('/api/uploadAudio', (req, res) => {
     console.log('Audio data received and saved as WAV file');
     res.sendStatus(200);
 });
-
-app.use('/api/auth', authRoutes);
 
 app.listen(port, () => {
     console.log(`서버가 실행 중입니다.`);

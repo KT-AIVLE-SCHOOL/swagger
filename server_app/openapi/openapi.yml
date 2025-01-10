@@ -31,5 +31,9 @@ paths:
     $ref: './openapi/paths/hello.yml'
   /auth/login:
     $ref: './openapi/paths/login.yml'
+  /auth/checkEmail:
+    $ref: './openapi/paths/checkEmail.yml'
+  /auth/checkPass:
+    $ref: './openapi/paths/checkPass.yml'
   /auth/register:
     $ref: './openapi/paths/register.yml'
