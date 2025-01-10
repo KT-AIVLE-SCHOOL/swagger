@@ -1,5 +1,7 @@
 post:
   summary: 신규 사용자 등록
+  tags:
+    - auth
   requestBody:
     required: true
     content:

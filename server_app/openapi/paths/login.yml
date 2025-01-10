@@ -1,5 +1,7 @@
 get:
   summary: 사용자 로그인
+  tags:
+    - auth
   parameters:
     $ref: '../components/login.yml#/LoginParameters'
   responses:
