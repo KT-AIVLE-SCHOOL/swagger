@@ -2,7 +2,7 @@ get:
   summary: pass 이상 여부 검사
   tags:
     - auth
-  parametes:
+  parameters:
     $ref: '../components/checkPass.yml#/CheckPassParameters'
   responses:
     '200':
