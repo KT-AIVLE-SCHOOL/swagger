@@ -19,12 +19,13 @@ router.get('/login', (req, res) => {
     try {
         const accessResult = jwt.verifyToken(accessToken);
         if (accessResult) {
-            isTokenInDB(accessToken)
+            // DB에 동일한 accessToken 여부 확인 필요
             return res.json({success: true});
         }
 
         const refreshResult = jwt.verifyToken(refreshToken);
         if (refreshResult) {
+            // DB에 동일한 refreshToken 여부 확인 필요
             const newAccessToken = jwt.generateToken(refreshResult.email);
             return res.status(403).json({success: false, message: "토큰 교환", accessToken: newAccessToken});
         }
@@ -32,6 +33,27 @@ router.get('/login', (req, res) => {
     } catch (error) {
         console.error('Token verification error:', error);
         return res.status(500).json({success: false, message: "Internal server error"});
+    }
+});
+
+router.post('/register', (req, res) => {
+    const { username, email, password, method } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({success: false, message: "불량 값"});
+    }
+
+    if (method !== 0 && method !== 1) {
+        return res.status(400).json({success: false, message: "유효하지 않은 로그인 수단"});
+    }
+
+    try {
+        // DB에 동일한 이메일 존재 확인 필요
+        const { accessToken, refreshToken } = jwt.generateToken(email);
+        return res.json({success: true, accessToken: accessToken, refreshToken: refreshToken});
+    } catch (error) {
+        console.error('Token generation error:', error);
+        return res.status(500).json({message: "Internal server error"});
     }
 });
 
@@ -62,25 +84,30 @@ router.get('/checkPass', (req, res) => {
     } catch (error) {
         return res.status(500).json({success: false, message: "Internal Server Error"});
     }
-})
+});
 
-router.post('/register', (req, res) => {
-    const { username, email, password, method } = req.body;
-
-    if (!email || !password) {
-        return res.status(400).json({success: false, message: "불량 값"});
-    }
-
-    if (method !== 0 && method !== 1) {
-        return res.status(400).json({success: false, message: "유효하지 않은 로그인 수단"});
-    }
+router.get('/findEmail', (req, res) => {
+    const email = req.query.email;
 
     try {
-        const { accessToken, refreshToken } = jwt.generateToken(email);
-        return res.json({success: true, accessToken: accessToken, refreshToken: refreshToken});
+        // DB 작업을 해서 이메일 존재 여부 확인
+        return res.json({success: true});
+
     } catch (error) {
-        console.error('Token generation error:', error);
-        return res.status(500).json({message: "Internal server error"});
+        return res.status(500).json({success: false, message: "내부 서버 오류"})
+    }
+});
+
+router.get('/findPass', (req, res) => {
+    const accessToken = req.cookies.accessToken;
+
+    try {
+        const accessResult = jwt.verifyToken(accessToken);
+        // DB에서 accessToken 존재 여부를 찾는다
+        // accessToken이 존재하면 해당 db의 이메일로 신규 비밀번호를 보내준다
+        return res.json({success: true});
+    } catch (error) {
+        return res.status(500).json({success: false, message: "내부 서버 오류"});
     }
 });
 

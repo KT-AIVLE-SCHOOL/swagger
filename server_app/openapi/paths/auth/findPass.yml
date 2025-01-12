@@ -1,0 +1,26 @@
+get:
+  summary: 비밀번호 재설정
+  tags:
+    - auth
+  parameters:
+    $ref: '../../components/auth/findPass.yml#/FindPassParameters'
+  responses:
+    '200':
+      description: 비밀번호 보냄
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/auth/findPass.yml#/FindPassSuccessResponse'
+    '400':
+      description: 유효하지 않은 인증수단
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/auth/findPass.yml#/ErrorResponseInvalidToken'
+    '500':
+      description: 내부 서버 오류
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/auth/findPass.yml#/ErrorResponseInternalServer'
+  
