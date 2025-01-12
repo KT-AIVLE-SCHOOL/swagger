@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const wav = require('wav');
 const authRoutes = require('./routes/authRoutes');
+const configRoutes = require('./routes/configRoutes');
 const port = 3000;
 
 const swaggerDocument = YAML.load(path.join(__dirname, 'openapi/openapi.yml'));
@@ -31,6 +32,8 @@ app.get('/api/hello', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+
+app.use('/api/config', configRoutes);
 
 app.use(bodyParser.raw({type: 'application/octet-stream', limit: '10mb'}));
 
