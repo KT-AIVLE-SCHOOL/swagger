@@ -23,6 +23,16 @@ ErrorResponseInvalidToken:
       type: string
       example: 유효하지 않은 인증수단
 
+ErrorResponseNotFoundEmail:
+  type: object
+  properties:
+    success:
+      type: boolean
+      exmaple: false
+    message:
+      type:
+      example: 등록되지 않은 이메일입니다
+
 ErrorResponseInternalServer:
   type: object
   properties:

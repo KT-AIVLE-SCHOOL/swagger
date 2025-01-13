@@ -17,6 +17,12 @@ get:
         application/json:
           schema:
             $ref: '../../components/auth/findPass.yml#/ErrorResponseInvalidToken'
+    '404':
+      description: 존재하지 않는 이메일
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/auth/findPass.yml#/ErrorResponseNotFoundEmail'
     '500':
       description: 내부 서버 오류
       content:

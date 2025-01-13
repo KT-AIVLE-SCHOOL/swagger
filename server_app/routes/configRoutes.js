@@ -2,20 +2,24 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const router = express.Router();
 const jwt = require('../utils/jwtUtils');
+const db = require('../db/db_utils');
 
 router.use(express.json());
 router.use(express.urlencoded({extended: true}));
 router.use(cookieParser());
 
-router.get('/getSettingInfo', (req, res) => {
+router.get('/getSettingInfo', async (req, res) => {
     const accessToken = req.cookies.accessToken;
 
     try {
         if (jwt.verifyToken(accessToken)) {
             // DB에서 accessToken 존재 여부 확인
-            // accessToken을 동일한 정보를 찾았을 경우, 정보를 넘겨준다
-            res.setHeader('settingInfo', JSON.stringify({alarm: true, babyName: "abc", babyBirth: "2023-01-01", dataEliminateDuration: 15, coreTimeStart: 13, coreTimeEnd: 17}));
-            return res.json({success: true});
+            const value = await db.findByValue("accessToken", accessToken);
+
+            if (value !== null) {
+                res.setHeader('settingInfo', JSON.stringify({alarm: value.alarm, babyName: value.babyName, babyBirth: "2023-01-01", dataEliminateDuration: 15, coreTimeStart: 13, coreTimeEnd: 17}));
+                return res.json({success: true});
+            }
         } else {
             return res.json({success: false, message: "유효하지 않은 접근수단"});
         }

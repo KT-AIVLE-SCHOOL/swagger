@@ -1,7 +1,7 @@
 post:
   summary: 사용자 회원 탈퇴
   tags:
-    - auth
+    - config
   requestBody:
     required: true
     content:
