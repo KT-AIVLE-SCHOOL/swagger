@@ -1,10 +1,10 @@
-CheckEmailParameters:
-  - in: cookie
-    name: email
-    schema:
+CheckEmailRequest:
+  type: object
+  properties:
+    email:
       type: string
-    required: true
-    description: 이메일 주소
+  required:
+    - email
 
 CheckEamilSuccessResponse:
   type: object
