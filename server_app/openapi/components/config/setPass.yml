@@ -1,23 +1,20 @@
-GetPersonalInfoParameters:
-  - in: cookie
-    name: accessToken
-    schema:
+SetPassRequest:
+  type: object
+  properties:
+    accessToken:
       type: string
-    required: true
-    description: jwt 토큰
+    password:
+      type: string
+  required:
+    - accessToken
+    - password
 
-GetPersonalInfoSuccessResponse:
+SetPassSuccessResponse:
   type: object
   properties:
     success:
       type: boolean
       example: true
-    name:
-      type: string
-      example: joojaeho
-    email:
-      type: string
-      example: example@dot.com 
 
 ErrorResponseInvalidToken:
   type: object
@@ -29,6 +26,16 @@ ErrorResponseInvalidToken:
       type: string
       example: 유효하지 않은 인증수단
 
+ErrorResponseNotUser:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: 존재하지 않는 이용자
+
 ErrorResponseInternalServer:
   type: object
   properties:
@@ -38,3 +45,4 @@ ErrorResponseInternalServer:
     message:
       type: string
       example: 내부 서버 오류
+  

@@ -1,23 +1,19 @@
-GetPersonalInfoParameters:
-  - in: cookie
-    name: accessToken
-    schema:
+SetAliasNameRequest:
+  type: object
+  properties:
+    accessToken:
       type: string
-    required: true
-    description: jwt 토큰
+    name:
+      type: string
+  required:
+    - accessToken
 
-GetPersonalInfoSuccessResponse:
+SetAliasNameSuccessResponse:
   type: object
   properties:
     success:
       type: boolean
       example: true
-    name:
-      type: string
-      example: joojaeho
-    email:
-      type: string
-      example: example@dot.com 
 
 ErrorResponseInvalidToken:
   type: object
@@ -28,6 +24,16 @@ ErrorResponseInvalidToken:
     message:
       type: string
       example: 유효하지 않은 인증수단
+
+ErrorResponseNotUser:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: 존재하지 않는 이용자
 
 ErrorResponseInternalServer:
   type: object

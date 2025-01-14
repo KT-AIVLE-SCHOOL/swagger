@@ -139,9 +139,64 @@ router.get('/getPersonalInfo', async (req, res) => {
         if (jwt.verifyToken(accessToken)) {
             const value = await db.findByValue("accessToken", accessToken);
             if (value !== null) {
-                return res.json({success: true})
+                return res.json({success: true, name: value.name, email: value.email})
             }
         }
+    } catch (error) {
+        return res.status(500).json({success: false, message: "내부 서버 오류"});
+    }
+});
+
+router.get('/getAliasName', async (req, res) => {
+    const accessToken = req.cookies.accessToken
+
+    try {
+        if (jwt.verifyToken(accessToken)) {
+            const value = await db.findByValue("accessToken", accessToken);
+            if (value !== null) {
+                return res.json({success: true, name: value.aliasname});
+            }
+            return res.status(404).json({success: false, message: "존재하지 않는 이용자입니다"});
+        }
+        return res.status(400).json({success: false, message: "유효하지 않은 인증수단"});
+    } catch (error) {
+        return res.status(500).json({success: false, message: "내부 서버 오류"});
+    }
+});
+
+router.post('/setAliasName', async (req, res) => {
+    const { accessToken, name } = req.body;
+
+    try {
+        if (jwt.verifyToken(accessToken)) {
+            const value = await db.findByValue("accessToken", accessToken);
+
+            if (value !== null) {
+                await db.updateConfigInfo(value.id, {aliasname: name});
+                return res.json({success: true});
+            }
+            return res.status(404).json({success: false, message: "존재하지 않는 이용자"});
+        }
+        return res.status(400).json({success: false, message: "유효하지 않은 인증수단"});
+    } catch (error) {
+        return res.status(500).json({success: false, message: "내부 서버 오류"});
+    }
+});
+
+router.post('/setPass', async (req, res) => {
+    const { accessToken, password } = req.body;
+
+    try {
+        if (jwt.verifyToken(accessToken)) {
+            const value = await db.findByValue("accessToken", accessToken);
+
+            if (value !== null) {
+                await db.updateConfigInfo(value.id, {password: password});
+                return res.json({success: true});
+            }
+            return res.status(400).json({success: false, message: "존재하지 않는 이용자"});
+        }
+        return res.status(404).json({success: false, message: "유효하지 않은 인증수단"});
     } catch (error) {
         return res.status(500).json({success: false, message: "내부 서버 오류"});
     }
