@@ -1,9 +1,13 @@
-get:
+post:
   summary: email 중복 검사
   tags:
     - auth
-  parameters:
-    $ref: '../../components/auth/checkEmail.yml#/CheckEmailParameters'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/auth/checkEmail.yml#/CheckEmailRequest'
   responses:
     '200':
       description: 이메일 검사 성공

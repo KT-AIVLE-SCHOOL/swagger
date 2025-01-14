@@ -1,9 +1,12 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const hutils = require('../utils/hashUtils');
+const nodemailer = require('nodemailer');
 const router = express.Router();
 const jwt = require('../utils/jwtUtils');
 const chk = require('../utils/checkUtils');
 const db = require('../db/db_utils');
+const midWare = require('../middleware/auth/passToHash');
 
 router.use(cookieParser());
 router.use(express.json());
@@ -14,24 +17,24 @@ router.post('/login', async (req, res) => {
 
     try {
         const value = await db.findByValue("email", email);
+        const passwordMatch = await hutils.comparePass(password, value.password);
 
-        if (value !== null) {
-            if (value.password !== password)
-                return res.status(400).json({success: false, message: "잘못된 비밀번호"});
-            if (!jwt.verifyToken(value.accessToken)) {
-                const { accessToken, refreshToken } = jwt.generateToken(email);
-                await db.updateUserInfo(value.accessToken, {accessToken: accessToken, refreshToken: refreshToken});
-                return res.json({success: true, accessToken: accessToken, refreshToken: refreshToken});
-            }
+        console.log(passwordMatch);
+        console.log(password, value.password);
+
+        if (value !== null && passwordMatch) {
+            const { accessToken, refreshToken } = jwt.generateToken(email);
+            await db.updateUserInfo(value.accessToken, {accessToken: accessToken, refreshToken: refreshToken});
+            return res.json({success: true, accessToken: accessToken, refreshToken: refreshToken});
         }
-        return res.status(404).json({success: false, message: "신규 가입 필요"});
+        return res.status(404).json({success: false, message: "이메일 또는 비밀번호 오류"});
     } catch (error) {
         console.error('Token verification error:', error);
-        return res.status(500).json({success: false, message: "Internal server error"});
+        return res.status(500).json({success: false, message: "내부 서버 오류"});
     }
 });
 
-router.post('/register', async (req, res) => {
+router.post('/register', midWare.hashPasswordToPost, async (req, res) => {
     const { username, email, password, method } = req.body;
 
     if (!email || !password) {
@@ -59,8 +62,8 @@ router.post('/register', async (req, res) => {
     }
 });
 
-router.get('/checkEmail', (req, res) => {
-    const email = req.cookies.email;
+router.post('/checkEmail', (req, res) => {
+    const email = req.body.email;
 
     try {
         if (chk.checkEmail(email))
@@ -71,8 +74,8 @@ router.get('/checkEmail', (req, res) => {
     }
 });
 
-router.get('/checkPass', (req, res) => {
-    const password = req.cookies.password;
+router.post('/checkPass', (req, res) => {
+    const password = req.body.password;
     const comb = chk.checkPass(password);
 
     try {
@@ -111,15 +114,40 @@ router.get('/findPass', async (req, res) => {
 
     try {
         const accessResult = jwt.verifyToken(accessToken);
-        // DB에서 accessToken 존재 여부를 찾는다
         if (!accessResult)
             return res.status(400).json({success: false, message: "유효하지 않은 인증수단"});
+        // DB에서 accessToken 존재 여부를 찾는다
         const value = await db.findByValue("accessToken", accessToken);
         if (!value)
             return res.status(404).json({success: false, message: "존재하지 않는 이메일입니다"});
         // accessToken이 존재하면 해당 db의 이메일로 신규 비밀번호를 보내준다
+        const transporter = nodemailer.createTransport({
+            host: "smtp.naver.com",
+            port: 587,
+            secure: false,
+            auth: {
+                user: process.env.MAILUSER,
+                pass: process.env.MAILPASS,
+            },
+        });
+        // password를 난수 설정하는 함수 필요
+        password = "string@123";
+        const info = await transporter.sendMail({
+            from: `${process.env.MAILNAME} <${process.env.MAILADDR}>`,
+            to: `${value.email}`,
+            subject: "[나비잠] 안녕하십니까 고객님. 임시 비밀번호 안내입니다.",
+            html: `
+                <h3>나비잠을 사용해주시는 고객님. 대단히 감사합니다.</h3>
+                <p>신청하신 임시 비밀번호는 다음과 같습니다.</p>
+                <h4>${password}</h4>
+                <p>임시 비밀번호로 로그인 하신 후, 반드시 비밀번호 변경을 통해 비밀번호를 바꿔주시면 대단히 감사하겠습니다.</p>
+            `
+        });
+        const hashPass = await hutils.hashPassword(password);
+        await db.updateUserInfo(accessToken, {password: hashPass});
         return res.json({success: true});
     } catch (error) {
+        console.log(error);
         return res.status(500).json({success: false, message: "내부 서버 오류"});
     }
 });

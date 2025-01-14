@@ -1,9 +1,13 @@
-get:
+post:
   summary: pass 이상 여부 검사
   tags:
     - auth
-  parameters:
-    $ref: '../../components/auth/checkPass.yml#/CheckPassParameters'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/auth/checkPass.yml#/CheckPassRequest'
   responses:
     '200':
       description: 비밀번호 검사 성공
