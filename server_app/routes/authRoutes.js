@@ -5,15 +5,17 @@ const jwt = require('../utils/jwtUtils');
 const chk = require('../utils/checkUtils');
 const db = require('../db/db_utils');
 
+router.use(cookieParser());
 router.use(express.json());
 router.use(express.urlencoded({extended: true}));
-router.use(cookieParser());
 
 router.get('/login', async (req, res) => {
     const accessToken = req.cookies.accessToken;
     const refreshToken = req.cookies.refreshToken;
+
+    console.log(req.cookies);
     
-    if (!accessToken || !refreshToken) {
+    if (!(accessToken || refreshToken)) {
         return res.status(400).json({success: false, message: "불량 토큰"});
     }
 
@@ -26,13 +28,13 @@ router.get('/login', async (req, res) => {
                 return res.json({success: true});
         }
 
-        const refreshResult = jwt.verifyValue(refreshToken);
+        const refreshResult = jwt.verifyToken(refreshToken);
         if (refreshResult) {
             // DB에 동일한 refreshToken 여부 확인 필요
-            const value = await db.findByToken("refreshToken", refreshToken);
+            const value = await db.findByValue("refreshToken", refreshToken);
             if (value !== null) {
                 const {newAccessToken, newRefreshToken} = jwt.generateToken(refreshResult.email);
-                await updateUserInfo(accessToken, {accessToken: newAccessToken, refreshToken: newRefreshToken});
+                await db.updateUserInfo(accessToken, {accessToken: newAccessToken, refreshToken: newRefreshToken});
                 return res.status(403).json({success: false, message: "토큰 교환", accessToken: newAccessToken});
             }
         }
@@ -60,6 +62,8 @@ router.post('/register', async (req, res) => {
         if (value === null) {
             const { accessToken, refreshToken } = jwt.generateToken(email);
             await db.insertUserInfo({username: username, email: email, password: password, method: method, accessToken: accessToken, refreshToken: refreshToken, aliasname: null, profileimage: null});
+            await db.insertConfigInfo(accessToken, {alarm: false, dataeliminateduration: 10, coretimestart: 9, coretimeend: 18});
+            await db.insertBabyInfo(accessToken, {babyname: "입력해주세요", babybirth: "1990-01-01"});
             return res.json({success: true, accessToken: accessToken, refreshToken: refreshToken});
         }
         return res.status(400).json({success: false, message: "이미 가입한 회원입니다"});
@@ -101,7 +105,7 @@ router.get('/checkPass', (req, res) => {
 router.get('/findEmail', async (req, res) => {
     const email = req.query.email;
 
-    if (!checkEmail(email)) {
+    if (!chk.checkEmail(email)) {
         return res.status(400).json({success: false, message: "잘못된 형식의 이메일입니다"});
     }
 

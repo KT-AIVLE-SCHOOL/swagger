@@ -55,5 +55,9 @@ paths:
     $ref: './openapi/paths/config/setProfileImage.yml'
   /config/getProfileImage:
     $ref: './openapi/paths/config/getProfileImage.yml'
-  # /config/changePass:
-  #   $ref: './opanapi/paths/changePass.yml'
+  /config/getAliasName:
+    $ref: './openapi/paths/config/getAliasName.yml'
+  /config/setAliasName:
+    $ref: './openapi/paths/config/setAliasName.yml'
+  /config/setPass:
+    $ref: './openapi/paths/config/setPass.yml'
