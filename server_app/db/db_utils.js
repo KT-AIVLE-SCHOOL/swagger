@@ -82,7 +82,6 @@ exports.createTable = async function() {
 exports.findByValue = async function(key, val) {
     const query = `SELECT * FROM UserInfo WHERE ${key} = $1`;
     const result = await pool.query(query, [val]);
-    console.log(result.rows);
 
     if (result.rows.length === 0) {
         return null;

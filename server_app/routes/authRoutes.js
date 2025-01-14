@@ -9,36 +9,22 @@ router.use(cookieParser());
 router.use(express.json());
 router.use(express.urlencoded({extended: true}));
 
-router.get('/login', async (req, res) => {
-    const accessToken = req.cookies.accessToken;
-    const refreshToken = req.cookies.refreshToken;
-
-    console.log(req.cookies);
-    
-    if (!(accessToken || refreshToken)) {
-        return res.status(400).json({success: false, message: "불량 토큰"});
-    }
+router.post('/login', async (req, res) => {
+    const { email, password } = req.body;
 
     try {
-        const accessResult = jwt.verifyToken(accessToken);
-        if (accessResult) {
-            // DB에 동일한 accessToken 여부 확인 필요
-            const value = await db.findByValue("accessToken", accessToken);
-            if (value !== null)
-                return res.json({success: true});
-        }
+        const value = await db.findByValue("email", email);
 
-        const refreshResult = jwt.verifyToken(refreshToken);
-        if (refreshResult) {
-            // DB에 동일한 refreshToken 여부 확인 필요
-            const value = await db.findByValue("refreshToken", refreshToken);
-            if (value !== null) {
-                const {newAccessToken, newRefreshToken} = jwt.generateToken(refreshResult.email);
-                await db.updateUserInfo(accessToken, {accessToken: newAccessToken, refreshToken: newRefreshToken});
-                return res.status(403).json({success: false, message: "토큰 교환", accessToken: newAccessToken});
+        if (value !== null) {
+            if (value.password !== password)
+                return res.status(400).json({success: false, message: "잘못된 비밀번호"});
+            if (!jwt.verifyToken(value.accessToken)) {
+                const { accessToken, refreshToken } = jwt.generateToken(email);
+                await db.updateUserInfo(value.accessToken, {accessToken: accessToken, refreshToken: refreshToken});
+                return res.json({success: true, accessToken: accessToken, refreshToken: refreshToken});
             }
         }
-        return res.status(401).json({success: false, message: "신규 가입 필요"});
+        return res.status(404).json({success: false, message: "신규 가입 필요"});
     } catch (error) {
         console.error('Token verification error:', error);
         return res.status(500).json({success: false, message: "Internal server error"});
