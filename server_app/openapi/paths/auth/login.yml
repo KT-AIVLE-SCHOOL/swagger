@@ -1,9 +1,13 @@
-get:
+post:
   summary: 사용자 로그인
   tags:
     - auth
-  parameters:
-    $ref: '../../components/auth/login.yml#/LoginParameters'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/auth/login.yml#/LoginRequest'
   responses:
     '200':
       description: 로그인 성공
@@ -12,19 +16,13 @@ get:
           schema:
             $ref: '../../components/auth/login.yml#/LoginSuccessResponse'
     '400':
-      description: 불량 토큰
+      description: 잘못된 비밀번호
       content:
         application/json:
           schema:
             $ref: '../../components/auth/login.yml#/ErrorResponseInvalidToken'
-    '401':
-      description: 토큰 기한 초과
-      content:
-        application/json:
-          schema:
-            $ref: '../../components/auth/login.yml#/ErrorResponseExpiredToken'
-    '403':
-      description: 토큰 재발급
+    '404':
+      description: 존재하지 않는 이용자
       content:
         application/json:
           schema:

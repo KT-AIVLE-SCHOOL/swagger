@@ -1,16 +1,13 @@
-LoginParameters:
-  - in: cookie
-    name: accessToken
-    schema:
+LoginRequest:
+  type: object
+  properties:
+    email:
       type: string
-    required: true
-    description: 액세스 토큰
-  - in: cookie
-    name: refreshToken
-    schema:
+    password:
       type: string
-    required: true
-    description: 리프레시 토큰
+  required:
+    - email
+    - password
 
 LoginSuccessResponse:
   type: object
@@ -18,6 +15,12 @@ LoginSuccessResponse:
     success:
       type: boolean
       example: true
+    accessToken:
+      type: string
+      example: "123.123.123"
+    refreshToken:
+      type: string
+      example: "123.123.123"
 
 ErrorResponseInvalidToken:
   type: object
