@@ -7,10 +7,10 @@ SetSettingInfoRequest:
       type: boolean
     babyName:
       type: string
-    babyBith:
+    babyBirth:
       type: string
       format: date
-    dataEmliminateDuration:
+    dataEliminateDuration:
       type: integer
     coreTimeStart:
       type: integer

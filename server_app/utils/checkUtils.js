@@ -4,7 +4,7 @@ exports.checkEmail = (email) => {
 }
 
 exports.checkPass = (password) => {
-    const combination = /[0-9]/.test(password) + /[a-z][A-Z]/.test(password) + /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    const combination = /[0-9]/.test(password) + /[a-zA-Z]/.test(password) + /[!@#$%^&*(),.?":{}|<>]/.test(password);
     const len = password.length;
 
     if (combination > 1 && len > 7 && len < 21)
