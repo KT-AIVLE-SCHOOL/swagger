@@ -24,7 +24,9 @@ tags:
   - name: dashboard
     description: dashboard 페이지 구성에 필요한 정보 요청 api
   - name: config
-    description: config 페이지의 일반 설정을 저장 및 불러오는 api 
+    description: config 페이지의 일반 설정을 저장 및 불러오는 api
+  - name: admin
+    description: 공지사항 CRUD 및 관리자 계정 api
 
 paths:
   /hello:
@@ -61,3 +63,13 @@ paths:
     $ref: './openapi/paths/config/setAliasName.yml'
   /config/setPass:
     $ref: './openapi/paths/config/setPass.yml'
+  /admin/createNotice:
+    $ref: './openapi/paths/admin/createNotice.yml'
+  /admin/updateNotice:
+    $ref: './openapi/paths/admin/updateNotice.yml'
+  /admin/getNoticeList:
+    $ref: './openapi/paths/admin/getNoticeList.yml'
+  /admin/readNotice:
+    $ref: './openapi/paths/admin/readNotice.yml'
+  /admin/deleteNotice:
+    $ref: './openapi/paths/admin/deleteNotice.yml'

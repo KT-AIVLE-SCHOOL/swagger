@@ -1,0 +1,23 @@
+get:
+  summary: 게시글 목록 뽑기
+  tags:
+    - admin
+  responses:
+    '200':
+      description: 게시글 목록 뽑기 성공
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/admin/getNoticeList.yml#/GetNoticeListSuccessResponse'
+    '404':
+      description: 공지사항이 존재하지 않음
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/admin/getNoticeList.yml#/ErrorResponseNotFoundNotice'
+    '500':
+      description: 내부 서버 오류
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/admin/getNoticeList.yml#/ErrorResponseInternalServer'

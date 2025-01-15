@@ -17,21 +17,63 @@ router.post('/login', async (req, res) => {
 
     try {
         const value = await db.findByValue("email", email);
+        const adminValue = await db.findByAdmin("email", email);
         const passwordMatch = await hutils.comparePass(password, value.password);
+        const isAdmin = (adminValue !== null) ? true : false;
 
-        console.log(passwordMatch);
-        console.log(password, value.password);
-
-        if (value !== null && passwordMatch) {
+        if ((value !== null || adminValue !== null) && passwordMatch) {
             const { accessToken, refreshToken } = jwt.generateToken(email);
-            await db.updateUserInfo(value.accessToken, {accessToken: accessToken, refreshToken: refreshToken});
-            return res.json({success: true, accessToken: accessToken, refreshToken: refreshToken});
+            if (value !== null)
+                await db.updateUserInfo(value.accessToken, {accessToken: accessToken, refreshToken: refreshToken});
+            else
+                await db.updateAdminInfo(adminValue.accessToken, {accessToken: accessToken});
+            return res.json({success: true, admin: isAdmin, accessToken: accessToken, refreshToken: refreshToken});
         }
         return res.status(404).json({success: false, message: "이메일 또는 비밀번호 오류"});
     } catch (error) {
         console.error('Token verification error:', error);
         return res.status(500).json({success: false, message: "내부 서버 오류"});
     }
+});
+
+router.get('/socialLoginKakao', async (req, res) => {
+    // try {
+    //     const { code } = req.query;
+    //     const tokenResponse = await axios.post(
+    //         "https://kauth.kakao/oauth/token",
+    //         null,
+    //         {
+    //             params: {
+    //                 grant_type: "authorization_code",
+    //                 client_id: REST_API_KET,
+    //                 redirect_uri: REDIRECT_URI,
+    //                 code: code,
+    //             },
+    //             headers: {
+    //                 "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
+    //             },
+    //         }
+    //     );
+    //     const { accessToken } = tokenResponse.data;
+
+    //     const userResponse = await axios.get(
+    //         "https://kapi.kakao.com/v2/user/me", {
+    //             headers: {
+    //                 Authorization: `Bearer ${accessToken}`,
+    //                 "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
+    //             },
+    //     });
+
+    //     const userData = userResponse.data;
+
+    //     return res.json({success: true, user: userData.data});
+    // } catch (error) {
+    //     return res.status(500).json({success: false, message: "내부 서버 오류"});
+    // }
+});
+
+router.get('/socialLoginNaver', async (req, res) => {
+
 });
 
 router.post('/register', midWare.hashPasswordToPost, async (req, res) => {

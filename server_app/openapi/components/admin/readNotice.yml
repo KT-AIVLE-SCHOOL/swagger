@@ -1,0 +1,49 @@
+ReadNoticeParameters:
+  - in: query
+    name: header
+    schema:
+      type: string
+    required: true
+    description: 게시글 제목
+  - in: query
+    name: writetime
+    schema:
+      type: string
+    required: true
+    description: 작성 시간
+
+ReadNoticeSuccessResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    hedaer:
+      type: string
+      example: 나비잠 안내사항입니다
+    body:
+      type: string
+      example: 안녕하십니까. 고객 여러분!
+    footer:
+      type: string
+      example: 나비잠 운영자 배상
+
+ErrorResponseNotFoundNotice:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: 본문이 없습니다
+
+ErrorResponseInternalServer:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: 내부 서버 오류

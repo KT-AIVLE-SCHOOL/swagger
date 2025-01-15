@@ -1,0 +1,38 @@
+GetNoticeListSuccessResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    data:
+      type: array
+      items:
+        type: object
+        properties:
+          header:
+            type: string
+            example: 안녕하세요. 나비잠 안내드립니다.
+          time:
+            type: string
+            example: "1990-01-01 23:12:11"
+
+
+ErrorResponseNotFoundNotice:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    message:
+      type: string
+      example: 공지사항이 존재하지 않음
+
+ErrorResponseInternalServer:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    message:
+      type: string
+      example: 내부 서버 오류

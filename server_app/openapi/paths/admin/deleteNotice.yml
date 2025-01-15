@@ -1,0 +1,35 @@
+post:
+  summary: 게시글 삭제하기
+  tags:
+    - admin
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/admin/deleteNotice.yml#/DeleteNoticeRequest'
+  responses:
+    '200':
+      description: 게시글 삭제 성공
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/admin/deleteNotice.yml#/DeleteNoticeSuccessResponse'
+    '400':
+      description: 유효하지 않은 인증수단
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/admin/deleteNotice.yml#/ErrorResponseInvalidToken'
+    '404':
+      description: 존재하지 않는 관리자
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/admin/deleteNotice.yml#/ErrorResponseNotAdmin'
+    '500':
+      description: 내부 서버 오류
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/admin/deleteNotice.yml#/ErrorResponseInternalServer'
