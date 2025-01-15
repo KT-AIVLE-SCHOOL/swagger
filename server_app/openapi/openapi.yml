@@ -73,3 +73,11 @@ paths:
     $ref: './openapi/paths/admin/readNotice.yml'
   /admin/deleteNotice:
     $ref: './openapi/paths/admin/deleteNotice.yml'
+  /dashboard/getBabyInfo:
+    $ref: './openapi/paths/dashboard/getBabyInfo.yml'
+  /dashboard/getBabyEmotionInfo:
+    $ref: './openapi/paths/dashboard/getBabyEmotionInfo.yml'
+  /dashboard/getBabyCoreTimeDataInfo:
+    $ref: './openapi/paths/dashboard/getBabyCoreTimeDataInfo.yml'
+  /dashboard/getBabyFrequencyInfo:
+    $ref: './openapi/paths/dashboard/getBabyFrequencyInfo.yml'
