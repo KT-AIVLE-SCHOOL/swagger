@@ -61,3 +61,11 @@ paths:
     $ref: './openapi/paths/config/setAliasName.yml'
   /config/setPass:
     $ref: './openapi/paths/config/setPass.yml'
+  /dashboard/getBabyInfo:
+    $ref: './openapi/paths/dashboard/getBabyInfo.yml'
+  /dashboard/getBabyEmotionInfo:
+    $ref: './openapi/paths/dashboard/getBabyEmotionInfo.yml'
+  /dashboard/getBabyCoreTimeDataInfo:
+    $ref: './openapi/paths/dashboard/getBabyCoreTimeDataInfo.yml'
+  /dashboard/getBabyFrequencyInfo:
+    $ref: './openapi/paths/dashboard/getBabyFrequencyInfo.yml'

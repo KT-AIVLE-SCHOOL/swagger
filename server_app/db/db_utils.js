@@ -241,3 +241,89 @@ exports.deleteUserInfo = async function(accessToken) {
         return false;
     return true;
 }
+
+// BabyEmotion에서 값 가져오기, LIMIT 지정, e.checkTime 내림차순 정렬
+exports.findBabyEmotionInfoByUserId = async function(id) {
+    const query = `
+        SELECT e.checkTime, e.emotion
+        FROM BabyEmotion e
+        JOIN UserInfo u ON u.id = e.user_id
+        WHERE u.id = $1
+        ORDER BY e.checkTime DESC
+        LIMIT 3
+    `;
+
+    const result = await pool.query(query, [id]);
+
+    if (result.rows.length === 0){
+        return null;
+    } else {
+        return result.rows;
+    }
+        // 1개일 때는 그냥 그냥 전달하고 2대부터 Array형태로 전달?
+//    } else if (result.row.length === 1){
+//        return result.row[0];
+//    } else {
+//        return result.rows;
+//    }
+}
+
+// 집중 관찰 시간의 아기 감정과 시간 데이터 가져오기 # 이거는 한번 더 확인 필요!!!!
+exports.findCoreTimeBabyInfoByUserId = async function(id) {
+    const query = `
+        SELECT e.emotion, e.checkTime
+        FROM BabyEmotion e
+        JOIN UserInfo u ON u.id = e.user_id
+        JOIN ConfigInfo c ON u.id = c.user_id
+        WHERE u.id = $1
+          AND (
+            (c.coretimestart <= c.coretimeend AND EXTRACT(HOUR FROM e.checkTime)::INTEGER BETWEEN c.coretimestart AND c.coretimeend)
+            OR
+            (c.coretimestart > c.coretimeend AND
+             (EXTRACT(HOUR FROM e.checkTime)::INTEGER >= c.coretimestart OR EXTRACT(HOUR FROM e.checkTime)::INTEGER < c.coretimeend))
+          )
+    `;
+
+    const result = await pool.query(query, [id]);
+    if (result.rows.length === 0){
+        return null;
+    } else {
+        return result.rows;
+    }
+}
+
+// 집중 관찰 시간 데이터 가져오기
+exports.findCoreTimeInfoByUserId = async function(id) {
+    const query = `
+        SELECT c.coretimestart, c.coretimeend
+        FROM ConfigInfo c
+        JOIN UserInfo u ON u.id = c.user_id
+        WHERE u.id = $1
+    `;
+
+    const result = await pool.query(query, [id]);
+    if (result.rows.length === 0){
+        return null;
+    } else {
+        return result.rows[0];
+    }
+}
+
+// 감정 데이터 가져오기
+exports.findBabyFrequencyInfoByUserId = async function(id) {
+    const query = `
+        SELECT e.emotion
+        FROM BabyEmotion e
+        JOIN UserInfo u ON u.id = e.user_id
+        WHERE u.id = $1
+        ORDER BY e.checkTime DESC
+    `;
+
+    const result = await pool.query(query, [id]);
+
+    if (result.rows.length === 0){
+        return null;
+    } else {
+        return result.rows.map(row => row.emotion);
+    }
+}
