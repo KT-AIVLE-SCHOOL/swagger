@@ -1,0 +1,44 @@
+CreateNoticeRequest:
+  type: object
+  properties:
+    accessToken:
+      type: string
+  required:
+    - accessToken
+
+CreateNoticeSuccessResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+
+ErrorResponseInvalidToken:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: 유효하지 않은 인증수단
+
+ErrorResponseUnathorized:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: 권한이 없는 사용자
+
+ErrorResponseInternalServer:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: 내부 서버 오류

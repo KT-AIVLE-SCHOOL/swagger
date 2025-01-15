@@ -12,13 +12,13 @@ exports.createTable = async function() {
     const createTableQuery = `
         CREATE TABLE IF NOT EXISTS UserInfo (
             id SERIAL PRIMARY KEY,
-            username VARCHAR(100) NOT NULL,
-            email VARCHAR(100) UNIQUE NOT NULL,
-            password VARCHAR(100) NOT NULL,
+            username TEXT NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL,
             method INTEGER NOT NULL,
             accessToken TEXT UNIQUE NOT NULL,
             refreshToken TEXT UNIQUE NOT NULL,
-            aliasname VARCHAR(100),
+            aliasname TEXT,
             profileimage BYTEA
         );
 
@@ -38,9 +38,9 @@ exports.createTable = async function() {
         CREATE TABLE IF NOT EXISTS ChatInfo (
             id SERIAL PRIMARY KEY,
             user_id INTEGER,
-            requesttime DATE NOT NULL,
+            requesttime TIMESTAMP NOT NULL,
             request JSON NOT NULL,
-            response json NOT NULL,
+            response JSON NOT NULL,
             CONSTRAINT fk_user
                 FOREIGN KEY (user_id)
                 REFERENCES UserInfo(id)
@@ -50,9 +50,8 @@ exports.createTable = async function() {
         CREATE TABLE IF NOT EXISTS BabyInfo (
             id SERIAL PRIMARY KEY,
             user_id INTEGER,
-            babyname VARCHAR(100) NOT NULL,
-            babybirth DATE NOT NULL,
-            babyimage BYTEA,
+            babyname TEXT NOT NULL,
+            babybirth TIMESTAMP NOT NULL,
             CONSTRAINT fk_user
                 FOREIGN KEY (user_id)
                 REFERENCES UserInfo(id)
@@ -63,7 +62,7 @@ exports.createTable = async function() {
             id SERIAL PRIMARY KEY,
             user_id INTEGER,
             baby_id INTEGER,
-            checktime DATE NOT NULL,
+            checktime TIMESTAMP NOT NULL,
             emotion INTEGER NOT NULL,
             CONSTRAINT fk_user
                 FOREIGN KEY (user_id)
@@ -72,6 +71,32 @@ exports.createTable = async function() {
             CONSTRAINT fk_baby
                 FOREIGN KEY (baby_id)
                 REFERENCES BabyInfo(id)
+                ON DELETE CASCADE
+        );
+    `;
+
+    await pool.query(createTableQuery);
+}
+
+exports.createAdminTable = async function() {
+    const createTableQuery = `
+        CREATE TABLE IF NOT EXISTS AdminInfo (
+            id SERIAL PRIMARY KEY,
+            adminid TEXT NOT NULL,
+            password TEXT NOT NULL,
+            accessToken TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS NoticeInfo (
+            id SERIAL PRIMARY KEY,
+            admin_id INTEGER,
+            writetime TIMESTAMP NOT NULL,
+            header TEXT NOT NULL,
+            body TEXT NOT NULL,
+            footer TEXT NOT NULL,
+            CONSTRAINT fk_admin
+                FOREIGN KEY (admin_id)
+                REFERENCES AdminInfo(id)
                 ON DELETE CASCADE
         );
     `;
@@ -88,6 +113,43 @@ exports.findByValue = async function(key, val) {
     } else {
         return result.rows[0];
     }
+}
+
+exports.findByAdmin = async function(key, val) {
+    const query = `SELECT * FROM AdminInfo WHERE ${key} = $1`;
+    const result = await pool.query(query, [val]);
+
+    if (result.rows.length === 0) {
+        return null;
+    } else {
+        return result.rows[0];
+    }
+}
+
+exports.findNoticeInfo = async function() {
+    const query = `
+        SELECT n.*
+        FROM NoticeInfo n
+        JOIN AdminInfo a on a.id = n.admin_id
+    `;
+
+    const result = await pool.query(query);
+
+    if (result.rows.length === 0)
+        return null;
+    return result.rows;
+}
+
+exports.findNoticeInfoByHeader = async function(header, writetime) {
+    const query = `
+        SELECT n.*
+        FROM NoticeInfo n
+        JOIN AdminInfo a ON a.id = n.admin_id
+        WHERE n.header = $1 AND n.writetime = $2
+    `;
+
+    const result = await pool.query(query, [header, writetime]);
+    return result.rows.length === 0 ? null : result.rows;
 }
 
 exports.findConfigInfoByUserId = async function(id) {
@@ -118,6 +180,25 @@ exports.findBabyInfoByUserId = async function(id) {
     if (result.rows.length === 0)
         return null;
     return result.rows[0];
+}
+
+exports.updateAdminInfo = async function(accessToken, updateColumns) {
+    const columns = Object.keys(updateColumns);
+    const setClause = columns.map((col, index) => `${col} = $${index + 1}`).join(', ');
+    const updateQuery = `
+        UPDATE AdminInfo
+        SET ${setClause}
+        WHERE accessToken = $${columns.length + 1}
+        RETURNING *;
+    `;
+
+    const values = [ ...Object.values(updateColumns), accessToken ];
+    
+    const result = await pool.query(updateQuery, values);
+
+    if (result.rowCount === 0)
+        return false;
+    return true;
 }
 
 exports.updateUserInfo = async function(accessToken, updateColumns) {
@@ -177,6 +258,40 @@ exports.updateBabyInfo = async function(id, updateColumns) {
     return true;  
 }
 
+exports.insertAdminInfo = async function(data) {
+    const columns = Object.keys(data).join(', ');
+    const values = Object.values(data);
+    const placeholders = values.map((_, index) => `$${index + 1}`).join(', ');
+    const query = `INSERT INTO AdminInfo (${columns}) VALUES (${placeholders}) RETURNING *`;
+
+    const result = await pool.query(query, values);
+
+    if (result.rowCount === 0)
+        return false;
+    return true;
+}
+
+exports.insertNoticeInfo = async function(accessToken, data) {
+    const value = await this.findByAdmin("accessToken", accessToken);
+
+    if (value !== null) {
+        const adminId = value.id;
+        const columns = Object.keys(data).join(', ');
+        const values = Object.values(data);
+        const placeholders = values.map((_, index) => `$${index + 2}`).join(', ');
+        const query = `
+            INSERT INTO NoticeInfo (admin_id, ${columns})
+            VALUES ($1, ${placeholders})
+            RETURNING *;
+        `;
+
+        const result = await pool.query(query, [ adminId, ...values ]);
+        if (result.rowCount === 0)
+            return false
+        return true;
+    }
+}
+
 exports.insertUserInfo = async function(data) {
     const columns = Object.keys(data).join(', ');
     const values = Object.values(data);
@@ -230,6 +345,16 @@ exports.insertBabyInfo = async function(accessToken, data) {
             return false;
         return true;
     }
+}
+
+exports.deleteNoticeInfo = async function(header, writetime) {
+    const query = `DELETE FROM NoticeInfo WHERE header = $1 AND writetime = $2`;
+
+    const result = await pool.query(query, [header, writetime]);
+
+    if (result.rowCount === 0)
+        return false;
+    return true;
 }
 
 exports.deleteUserInfo = async function(accessToken) {

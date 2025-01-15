@@ -1,0 +1,35 @@
+post:
+  summary: 게시글 작성 권한 확인
+  tags:
+    - admin
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/admin/createNotice.yml#/CreateNoticeRequest'
+  responses:
+    '200':
+      description: 작성 권한 얻기 성공
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/admin/createNotice.yml#/CreateNoticeSuccessResponse'
+    '400':
+      description: 유효하지 않은 인증수단
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/admin/createNotice.yml#/ErrorResponseInvalidToken'
+    '401':
+      description: 권한이 없는 사용자
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/admin/createNotice.yml#/ErrorResponseUnathorized'
+    '500':
+      description: 내부 서버 오류
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/admin/createNotice.yml#/ErrorResponseInternalServer'

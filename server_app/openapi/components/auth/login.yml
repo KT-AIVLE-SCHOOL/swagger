@@ -15,6 +15,9 @@ LoginSuccessResponse:
     success:
       type: boolean
       example: true
+    admin:
+      type: boolean
+      example: false
     accessToken:
       type: string
       example: "123.123.123"

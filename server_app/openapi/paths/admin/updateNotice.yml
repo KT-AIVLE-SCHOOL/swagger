@@ -1,0 +1,35 @@
+post:
+  summary: 공지사항 신규 작성
+  tags:
+    - admin
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/admin/updateNotice.yml#/UpdateNoticeRequest'
+  responses:
+    '200':
+      descripiton: 공지사항 신규 작성 성공
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/admin/updateNotice.yml#/UpdateNoticeSuccessResponse'
+    '400':
+      description: 유효하지 않은 인증수단
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/admin/updateNotice.yml#/ErrorResponseInvalidToken'
+    '401':
+      description: 권한이 없는 사용자입니다
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/admin/updateNotice.yml#/ErrorResponseUnauthorized'
+    '500':
+      description: 내부 서버 오류
+      content:
+        application/json:
+          schmea:
+            $ref: '../../components/admin/updateNotice.yml#/ErrorResponseInternalServer'

@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const wav = require('wav');
 const db = require('./db/db_utils');
+const adminUtils = require('./utils/adminUtils');
 const authRoutes = require('./routes/authRoutes');
 const configRoutes = require('./routes/configRoutes');
 const port = 3000;
@@ -58,6 +59,8 @@ async function startServer() {
     try {
         await new Promise(resolve => setTimeout(resolve, 5000));
         await db.createTable();
+        await db.createAdminTable();
+        await adminUtils.createAdmin();
         app.listen(port, () => {
             console.log("서버가 실행 중입니다.");
         });

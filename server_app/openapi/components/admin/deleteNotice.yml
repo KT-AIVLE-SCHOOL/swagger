@@ -1,0 +1,51 @@
+DeleteNoticeRequest:
+  type: object
+  properties:
+    accessToken:
+      type: string
+    header:
+      type: string
+    writetime:
+      type: string
+  required:
+    - accessToken
+    - header
+    - writetime
+
+DeleteNoticeSuccessResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+
+ErrorResponseInvalidToken:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    message:
+      type: string
+      example: 유효하지 않은 인증수단
+
+
+ErrorResponseNotAdmin:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    message:
+      type: string
+      example: 존재하지 않는 관리자
+
+ErrorResponseInternalServer:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    message:
+      type: string
+      example: 내부 서버 오류

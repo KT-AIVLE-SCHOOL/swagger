@@ -1,0 +1,25 @@
+get:
+  summary: 게시글 중 하나 본문 보기
+  tags:
+    - admin
+  parameters:
+    $ref: '../../components/admin/readNotice.yml#/ReadNoticeParameters'
+  properties:
+    '200':
+      description: 본문 보고 성공
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/admin/readNotice.yml#/ReadNoticeSuccessResponse'
+    '404':
+      description: 내용물이 존재하지 않음
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/admin/readNotice.yml#/ErrorResponseNotFoundNotice'
+    '500':
+      description: 내부 서버 오류
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/admin/readNotice.yml#/ErrorResponseInternalServer'
