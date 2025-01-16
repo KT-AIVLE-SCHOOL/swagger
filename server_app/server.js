@@ -11,6 +11,8 @@ const db = require('./db/db_utils');
 const adminUtils = require('./utils/adminUtils');
 const authRoutes = require('./routes/authRoutes');
 const configRoutes = require('./routes/configRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 const port = 3000;
 
 const swaggerDocument = YAML.load(path.join(__dirname, 'openapi/openapi.yml'));
@@ -37,6 +39,10 @@ app.use('/api/auth', authRoutes);
 
 app.use('/api/config', configRoutes);
 
+app.use('/api/dashboard', dashboardRoutes);
+
+app.use('/api/admin', adminRoutes);
+
 app.use(bodyParser.raw({type: 'application/octet-stream', limit: '10mb'}));
 
 app.post('/api/uploadAudio', (req, res) => {
@@ -60,6 +66,7 @@ async function startServer() {
         await new Promise(resolve => setTimeout(resolve, 5000));
         await db.createTable();
         await db.createAdminTable();
+        await db.createVerificationTable();
         await adminUtils.createAdmin();
         app.listen(port, () => {
             console.log("서버가 실행 중입니다.");

@@ -1,4 +1,5 @@
 const express = require('express');
+const router = express.Router();
 const cookieParser = require('cookie-parser');
 const jwt = require('../utils/jwtUtils');
 const db = require('../db/db_utils');
@@ -91,3 +92,5 @@ router.post('/deleteNotice', async (req, res) => {
         return res.status(500).json({success: false, message: "내부 서버 오류"});
     }
 });
+
+module.exports = router

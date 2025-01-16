@@ -33,6 +33,10 @@ paths:
     $ref: './openapi/paths/hello.yml'
   /auth/login:
     $ref: './openapi/paths/auth/login.yml'
+  /auth/sendVerificationCode:
+    $ref: './openapi/paths/auth/sendVerificationCode.yml'
+  /auth/checkVerificationCode:
+    $ref: './openapi/paths/auth/checkVerificationCode.yml'
   /auth/checkEmail:
     $ref: './openapi/paths/auth/checkEmail.yml'
   /auth/checkPass:

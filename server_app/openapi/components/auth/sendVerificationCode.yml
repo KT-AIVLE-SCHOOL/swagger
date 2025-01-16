@@ -1,0 +1,37 @@
+SendVerificationCodeRequest:
+  type: object
+  properties:
+    email:
+      type: string
+  required:
+    - email
+
+SendVerificationCodeSuccessResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    code:
+      type: string
+      example: "123456"
+
+ErrorResponseRequestAgain:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: 다시 요청해주세요
+
+ErrorResponseInternalServer:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: 내부 서버 오류

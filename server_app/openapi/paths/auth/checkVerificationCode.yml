@@ -1,0 +1,35 @@
+post:
+  summary: 이메일 인증번호 검사
+  tags:
+    - auth
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/auth/checkVerificationCode.yml#/CheckVerificationCodeRequest'
+  responses:
+    '200':
+      description: 인증번호 일치, 정상적인 이메일
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/auth/checkVerificationCode.yml#/CheckVerificationCodeSuccessResponse'
+    '401':
+      description: 인증번호 불일치
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/auth/checkVerificationCode.yml#/ErrorResponseNotAccord'
+    '404':
+      description: 이메일 요청이 없는 사용자
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/auth/checkVerificationCode.yml#/ErrorResponseNotUser'
+    '500':
+      description: 내부 서버 오류
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/auth/checkVerificationCode.yml#/ErrorResponseInternalServer'

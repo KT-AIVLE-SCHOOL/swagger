@@ -15,3 +15,11 @@ exports.checkPass = (password) => {
         return 2;
     return 3;
 }
+
+exports.generateVerificationCode = () => {
+    return Math.floor(100000 + Math.random() * 900000);
+}
+
+exports.generatePass = () => {
+    return 
+}
