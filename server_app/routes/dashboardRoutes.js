@@ -7,10 +7,6 @@ const jwt = require('../utils/jwtUtils');
 router.use(cookieParser());
 router.use(express.json());
 
-
-
-
-
 // 아이 생년월일, 이름
 router.get('/getBabyInfo', async (req, res) => {
     const accessToken = req.cookies.accessToken;
@@ -69,46 +65,45 @@ router.get('/getBabyEmotionInfo', async (req, res) => {
 // 집중 관찰시간의 아기 감정 및 시간 데이터
 router.get('/getBabyCoreTimeDataInfo', async (req, res) => {
     const accessToken = req.cookies.accessToken;
-    try{
-        if(jwt.verifyToken(accessToken)){
-            const value = await db.findByValue("accessToken", accessToken);
+    try {
+            if (jwt.verifyToken(accessToken)) {
+                const value = await db.findByValue("accessToken", accessToken);
+                if (value !== null) {
+                    const babyCoreTimeEmotions = await db.findCoreTimeBabyInfoByUserId(value.id);
+                    const babyCoreTime = await db.findCoreTimeInfoByUserId(value.id);
+                    if (babyCoreTimeEmotions !== null && babyCoreTime !== null) {
+                        // 감정별로 checkTime을 받는 객체 생성
+                        const emotionData = {
+                            1: [],
+                            2: [],
+                            3: [],
+                            4: [],
+                            5: []
+                        };
 
-            if (value !== null){
-                const babyCoreTimeEmotions = await db.findCoreTimeBabyInfoByUserId(value.id);
-                const babyCoreTime = await db.findCoreTimeInfoByUserId(value.id);
-                if (babyCoreTimeEmotions !== null && babyCoreTime !== null) {
-                    // 감정별로 checkTime을 받는 객체 생성
-                    const emotionData = {
-                        1: [],
-                        2: [],
-                        3: [],
-                        4: [],
-                        5: []
-                    };
+                        // 데이터 분류
+                        babyCoreTimeEmotions.forEach(item => {
+                            const emotion = item.emotion;
+                            const checkTime = item.checkTime; // PostgreSQL은 소문자로 반환할 수 있음
+                            if (Object.prototype.hasOwnProperty.call(emotionData, emotion)) {
+                                // checkTime에서 시간 데이터만 추출하여 Integer로 변환
+                                const date = new Date(checkTime);
+                                const timeOnly = date.getHours();
+                                emotionData[emotion].push(timeOnly);
+                            }
+                        });
 
-                    // 데이터 분류
-                    babyCoreTimeEmotions.forEach(item => {
-                        const emotion = item.emotion;
-                        const checkTime = item.checkTime; // PostgreSQL은 소문자로 반환할 수 있음
-                        if (Object.prototype.hasOwnProperty.call(emotionData, emotion)) {
-                            // checkTime에서 시간 데이터만 추출하여 Integer로 변환
-                            const date = new Date(checkTime);
-                            const timeOnly = date.getHours();
-                            emotionData[emotion].push(timeOnly);
-                        }
-                    });
-
-                    return res.json({
-                        success: true,
-                        emotionData: emotionData,
-                        coreTimeStart: babyCoreTime.coretimestart,
-                        coreTimeEnd: babyCoreTime.coretimeend
-                    });
-                else{
-                    return res.status(404).json({success: false, message: "해당 데이터가 없습니다."});
+                        return res.json({
+                            success: true,
+                            emotionData: emotionData,
+                            coreTimeStart: babyCoreTime.coretimestart,
+                            coreTimeEnd: babyCoreTime.coretimeend
+                        });
+                    } else {
+                        return res.status(404).json({success: false, message: "해당 데이터가 없습니다."});
+                    }
                 }
             }
-        }
         return res.status(400).json({success: false, message: "유효하지 않은 접근수단"});
     } catch (error) {
         console.log(error);
@@ -159,7 +154,5 @@ router.get('/getBabyFrequencyInfo', async (req, res) => {
         return res.status(500).json({success: false, message: "내부 서버 오류"});
     }
 });
-
-
 
 module.exports = router;

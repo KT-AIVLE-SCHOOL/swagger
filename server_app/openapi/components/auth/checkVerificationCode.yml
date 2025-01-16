@@ -1,0 +1,47 @@
+CheckVerificationCodeRequest:
+  type: object
+  properties:
+    email:
+      type: string
+    code:
+      type: string
+  required:
+    - email
+    - code
+
+CheckVerificationCodeSuccessResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+
+ErrorResponseNotAccord:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: 인증번호가 맞지 않습니다
+
+ErrorResponseNotUser:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: 요청한 적 없는 사용자
+
+ErrorResponseInternalServer:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: 내부 서버 오류

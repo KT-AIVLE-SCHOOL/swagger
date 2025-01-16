@@ -17,7 +17,7 @@ router.post('/login', async (req, res) => {
 
     try {
         const value = await db.findByValue("email", email);
-        const adminValue = await db.findByAdmin("email", email);
+        const adminValue = await db.findByAdmin("adminid", email);
         const passwordMatch = await hutils.comparePass(password, value.password);
         const isAdmin = (adminValue !== null) ? true : false;
 
@@ -113,6 +113,65 @@ router.post('/checkEmail', (req, res) => {
         return res.status(400).json({success: false, message: "이메일 양식에 맞지 않음"});
     } catch (error) {
         return res.json({success: false, message: "Internal Server Error"});
+    }
+});
+
+router.post('/sendVerificationCode', async (req, res) => {
+    const email = req.body.email;
+
+    try {
+        const code = chk.generateVerificationCode();
+        const check = await db.findByVerification("email", email);
+        if (check)
+            await db.deleteVerificationInfo(email);
+        const value = await db.insertVerificationInfo({email: email, code: code});
+
+        if (value !== null) {
+            const transporter = nodemailer.createTransport({
+                host: "smtp.naver.com",
+                port: 587,
+                secure: false,
+                auth: {
+                    user: process.env.MAILUSER,
+                    pass: process.env.MAILPASS,
+                },
+            });
+            const info = await transporter.sendMail({
+                from: `${process.env.MAILNAME} <${process.env.MAILADDR}>`,
+                to: `${email}`,
+                subject: "[나비잠] 안녕하십니까 고객님. 이메일 인증번호 안내입니다.",
+                html: `
+                    <h3>나비잠을 사용해주시는 고객님. 대단히 감사합니다.</h3>
+                    <p>인증번호는 다음과 같습니다.</p>
+                    <h4>${code}</h4>
+                    <p>나비잠에서 인증번호를 입력해주십시오.</p>
+                `
+            });
+            return res.json({success: true, code: code});
+        }
+        return res.status(400).json({success: false, message: "다시 한 번 요청해주세요"})
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({success: false, message: "내부 서버 오류"});
+    }
+});
+
+router.post('/checkVerificationCode', async (req, res) => {
+    const { email, code } = req.body;
+
+    try {
+        const value = await db.findByVerification("email", email);
+
+        if (value !== null) {
+            if (value.code === code) {
+                await db.deleteVerificationInfo(email);
+                return res.json({success: true});
+            }
+            return res.status(401).json({success: false, message: "인증번호가 맞지 않습니다"});
+        }
+        return res.status(404).json({success: false, message: "요청이 없는 사용자입니다"});
+    } catch (error) {
+        return res.status(500).json({success: false, message: "내부 서버 요청"});
     }
 });
 

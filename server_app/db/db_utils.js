@@ -104,6 +104,18 @@ exports.createAdminTable = async function() {
     await pool.query(createTableQuery);
 }
 
+exports.createVerificationTable = async function() {
+    const createTableQuery = `
+        CREATE TABLE IF NOT EXISTS VerificationInfo (
+            id SERIAL PRIMARY KEY,
+            email TEXT NOT NULL,
+            code TEXT NOT NULL
+        );
+    `;
+
+    await pool.query(createTableQuery);
+}
+
 exports.findByValue = async function(key, val) {
     const query = `SELECT * FROM UserInfo WHERE ${key} = $1`;
     const result = await pool.query(query, [val]);
@@ -117,6 +129,17 @@ exports.findByValue = async function(key, val) {
 
 exports.findByAdmin = async function(key, val) {
     const query = `SELECT * FROM AdminInfo WHERE ${key} = $1`;
+    const result = await pool.query(query, [val]);
+
+    if (result.rows.length === 0) {
+        return null;
+    } else {
+        return result.rows[0];
+    }
+}
+
+exports.findByVerification = async function(key, val) {
+    const query = `SELECT * FROM VerificationInfo WHERE ${key} = $1`;
     const result = await pool.query(query, [val]);
 
     if (result.rows.length === 0) {
@@ -258,6 +281,19 @@ exports.updateBabyInfo = async function(id, updateColumns) {
     return true;  
 }
 
+exports.insertVerificationInfo = async function(data) {
+    const columns = Object.keys(data).join(', ');
+    const values = Object.values(data);
+    const placeholders = values.map((_, index) => `$${index + 1}`).join(', ');
+    const query = `INSERT INTO VerificationInfo (${columns}) VALUES (${placeholders}) RETURNING *`;
+
+    const result = await pool.query(query, values);
+
+    if (result.rowCount === 0)
+        return false;
+    return true;
+}
+
 exports.insertAdminInfo = async function(data) {
     const columns = Object.keys(data).join(', ');
     const values = Object.values(data);
@@ -347,26 +383,6 @@ exports.insertBabyInfo = async function(accessToken, data) {
     }
 }
 
-exports.deleteNoticeInfo = async function(header, writetime) {
-    const query = `DELETE FROM NoticeInfo WHERE header = $1 AND writetime = $2`;
-
-    const result = await pool.query(query, [header, writetime]);
-
-    if (result.rowCount === 0)
-        return false;
-    return true;
-}
-
-exports.deleteUserInfo = async function(accessToken) {
-    const query = `DELETE FROM UserInfo WHERE accessToken = $1`;
-
-    const result = await pool.query(query, [accessToken]);
-
-    if (result.rowCount === 0)
-        return false;
-    return true;
-}
-
 // BabyEmotion에서 값 가져오기, LIMIT 지정, e.checkTime 내림차순 정렬
 exports.findBabyEmotionInfoByUserId = async function(id) {
     const query = `
@@ -451,4 +467,34 @@ exports.findBabyFrequencyInfoByUserId = async function(id) {
     } else {
         return result.rows.map(row => row.emotion);
     }
+}
+
+exports.deleteVerificationInfo = async function(email) {
+    const query = `DELETE FROM VerificationInfo WHERE email = $1`;
+
+    const result = await pool.query(query, [email]);
+
+    if (result.rowCount === 0)
+        return false;
+    return true;
+}
+
+exports.deleteNoticeInfo = async function(header, writetime) {
+    const query = `DELETE FROM NoticeInfo WHERE header = $1 AND writetime = $2`;
+
+    const result = await pool.query(query, [header, writetime]);
+
+    if (result.rowCount === 0)
+        return false;
+    return true;
+}
+
+exports.deleteUserInfo = async function(accessToken) {
+    const query = `DELETE FROM UserInfo WHERE accessToken = $1`;
+
+    const result = await pool.query(query, [accessToken]);
+
+    if (result.rowCount === 0)
+        return false;
+    return true;
 }
