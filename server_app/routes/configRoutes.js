@@ -148,7 +148,7 @@ router.get('/getPersonalInfo', async (req, res) => {
 });
 
 router.get('/getAliasName', async (req, res) => {
-    const accessToken = req.cookies.accessToken
+    const accessToken = req.cookies.accessToken;
 
     try {
         if (jwt.verifyToken(accessToken)) {

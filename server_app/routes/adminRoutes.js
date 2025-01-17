@@ -31,7 +31,7 @@ router.post('/updateNotice', async (req, res) => {
         if (jwt.verifyToken(accessToken)) {
             const value = await db.findByAdmin("accessToken", accessToken);
             if (value !== null) {
-                await db.insertNotice(accessToken, {header: header, body: body, footer: footer});
+                await db.insertNoticeInfo(accessToken, {header: header, body: body, footer: footer});
                 return res.json({success: true});
             }
             return res.status(401).json({success: false, message: "권한이 없는 사용자입니다"});
