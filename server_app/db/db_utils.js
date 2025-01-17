@@ -16,8 +16,8 @@ exports.createTable = async function() {
             email TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
             method INTEGER NOT NULL,
-            accessToken TEXT UNIQUE NOT NULL,
-            refreshToken TEXT UNIQUE NOT NULL,
+            accesstoken TEXT UNIQUE NOT NULL,
+            refreshtoken TEXT UNIQUE NOT NULL,
             aliasname TEXT,
             profileimage BYTEA
         );
@@ -39,8 +39,8 @@ exports.createTable = async function() {
             id SERIAL PRIMARY KEY,
             user_id INTEGER,
             requesttime TIMESTAMP NOT NULL,
-            request JSON NOT NULL,
-            response JSON NOT NULL,
+            request TEXT ARRAY NOT NULL,
+            response TEXT ARRAY NOT NULL,
             CONSTRAINT fk_user
                 FOREIGN KEY (user_id)
                 REFERENCES UserInfo(id)
@@ -205,6 +205,21 @@ exports.findBabyInfoByUserId = async function(id) {
     return result.rows[0];
 }
 
+exports.findChatInfoByUserId = async function(id) {
+    const query = `
+        SELECT c.*
+        FROM ChatInfo c
+        JOIN UserInfo u ON u.id = c.user_id
+        WHERE u.id = $1
+    `;
+
+    const result = await pool.query(query, [id]);
+
+    if (result.rows.length === 0)
+        return null;
+    return result.rows[result.rows.length - 1];
+}
+
 exports.updateAdminInfo = async function(accessToken, updateColumns) {
     const columns = Object.keys(updateColumns);
     const setClause = columns.map((col, index) => `${col} = $${index + 1}`).join(', ');
@@ -305,6 +320,27 @@ exports.insertAdminInfo = async function(data) {
     if (result.rowCount === 0)
         return false;
     return true;
+}
+
+exports.insertChatInfo = async function(accessToken, data) {
+    const value = await this.findByValue("accessToken", accessToken);
+
+    if (value !== null) {
+        const userId = value.id;
+        const columns = Object.keys(data).join(', ');
+        const values = Object.values(data);
+        const placeholders = values.map((_, index) => `$${index + 2}`).join(', ');
+        const query = `
+            INSERT INTO ChatInfo (user_id, ${columns})
+            VALUES ($1, ${placeholders})
+            RETURNING *;
+        `;
+
+        const result = await pool.query(query, [ userId, ...values ]);
+        if (result.rowCount === 0)
+            return false;
+        return true;
+    }
 }
 
 exports.insertNoticeInfo = async function(accessToken, data) {

@@ -23,10 +23,12 @@ router.post('/login', async (req, res) => {
 
         if ((value !== null || adminValue !== null) && passwordMatch) {
             const { accessToken, refreshToken } = jwt.generateToken(email);
-            if (value !== null)
-                await db.updateUserInfo(value.accessToken, {accessToken: accessToken, refreshToken: refreshToken});
+            if (value !== null) {
+                console.log(value);
+                await db.updateUserInfo(value.accesstoken, {accessToken: accessToken, refreshToken: refreshToken});
+            }
             else
-                await db.updateAdminInfo(adminValue.accessToken, {accessToken: accessToken});
+                await db.updateAdminInfo(adminValue.accesstoken, {accessToken: accessToken});
             return res.json({success: true, admin: isAdmin, accessToken: accessToken, refreshToken: refreshToken});
         }
         return res.status(404).json({success: false, message: "이메일 또는 비밀번호 오류"});

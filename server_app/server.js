@@ -3,6 +3,7 @@ const SwaggerParser = require('@apidevtools/swagger-parser');
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const path = require('path');
+const http = require('http');
 const app = express();
 const bodyParser = require('body-parser');
 const fs = require('fs');
@@ -13,6 +14,7 @@ const authRoutes = require('./routes/authRoutes');
 const configRoutes = require('./routes/configRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const chataiRoutes = require('./routes/chataiRoutes');
 const port = 3000;
 
 const swaggerDocument = YAML.load(path.join(__dirname, 'openapi/openapi.yml'));
@@ -68,6 +70,9 @@ async function startServer() {
         await db.createAdminTable();
         await db.createVerificationTable();
         await adminUtils.createAdmin();
+
+        chataiRoutes.startWebSocket();
+
         app.listen(port, () => {
             console.log("서버가 실행 중입니다.");
         });
