@@ -5,7 +5,7 @@ info:
   description: 6반 18조 swagger입니다
 
 servers:
-  - url: "{PROTOCOL}://{HOME_ADDRESS}:3000/api"
+  - url: "{PROTOCOL}://{HOME_ADDRESS}/api"
     variables:
       PROTOCOL:
         default: http
