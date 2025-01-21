@@ -8,9 +8,9 @@ servers:
   - url: "{PROTOCOL}://{HOME_ADDRESS}/api"
     variables:
       PROTOCOL:
-        default: http
+        default: https
       HOME_ADDRESS:
-        default: localhost
+        default: ai-aivle-bigp-18-swagger-bvdjenf2axdmhpdw.koreacentral-01.azurewebsites.net
 
 tags:
   - name: hello
