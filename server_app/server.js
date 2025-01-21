@@ -65,11 +65,11 @@ app.post('/api/uploadAudio', (req, res) => {
 
 async function startServer() {
     try {
-        // await new Promise(resolve => setTimeout(resolve, 5000));
-        // await db.createTable();
-        // await db.createAdminTable();
-        // await db.createVerificationTable();
-        // await adminUtils.createAdmin();
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        await db.createTable();
+        await db.createAdminTable();
+        await db.createVerificationTable();
+        await adminUtils.createAdmin();
 
         // chataiRoutes.startWebSocket();
 
