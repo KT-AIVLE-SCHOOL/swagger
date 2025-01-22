@@ -7,6 +7,8 @@ exports.hashPassword = async (password) => {
 }
 
 exports.comparePass = async (plain, hash) => {
+    if (plain == null || hash == null)
+        return false;
     const compareResult = await bcrypt.compare(plain, hash);
     return compareResult;
 }

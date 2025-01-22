@@ -18,6 +18,8 @@ router.post('/login', async (req, res) => {
     try {
         const value = await db.findByValue("email", email);
         const adminValue = await db.findByAdmin("adminid", email);
+        if (value == null && adminValue == null)
+            return res.status(404).json({success: false, message: "이메일 또는 비밀번호 오류"});
         const passwordMatch = await hutils.comparePass(password, value.password);
         const isAdmin = (adminValue !== null) ? true : false;
 
