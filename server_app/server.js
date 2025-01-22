@@ -5,6 +5,7 @@ const YAML = require('yamljs');
 const path = require('path');
 const http = require('http');
 const app = express();
+const server = http.createServer(app);
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const wav = require('wav');
@@ -71,9 +72,9 @@ async function startServer() {
         await db.createVerificationTable();
         await adminUtils.createAdmin();
 
-        // chataiRoutes.startWebSocket();
+        chataiRoutes.startWebSocket(server);
 
-        app.listen(port, () => {
+        server.listen(port, () => {
             console.log("서버가 실행 중입니다.");
         });
     } catch(error) {

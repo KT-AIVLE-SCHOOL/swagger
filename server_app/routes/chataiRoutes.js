@@ -3,8 +3,8 @@ const axios = require('axios');
 const db = require('../db/db_utils');
 const cal = require('../utils/calculateUtils')
 
-exports.startWebSocket = () => {
-    const wss = new WebSocket.Server({port: 8002});
+exports.startWebSocket = (server) => {
+    const wss = new WebSocket.Server({server});
     const ai_protocol = process.env.AI_PROTOCOLS;
     const chatai_host = process.env.CHATAI_HOST;
     const chatai_port = process.env.CHATAI_PORT;
