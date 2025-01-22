@@ -38,7 +38,7 @@ exports.createTable = async function() {
         CREATE TABLE IF NOT EXISTS ChatInfo (
             id SERIAL PRIMARY KEY,
             user_id INTEGER,
-            requesttime TIMESTAMP NOT NULL,
+            requesttime TEXT NOT NULL,
             request TEXT ARRAY NOT NULL,
             response TEXT ARRAY NOT NULL,
             CONSTRAINT fk_user
