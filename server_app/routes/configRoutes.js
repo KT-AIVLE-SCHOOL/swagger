@@ -49,7 +49,7 @@ router.post('/setSettingInfo', async (req, res) => {
                     return res.json({success: true});
             }
         }
-        return res.json({success: false, message: "유효하지 않은 접근수단"});
+        return res.status(400).json({success: false, message: "유효하지 않은 접근수단"});
     } catch (error) {
         return res.status(500).json({success: false, message: "내부 서버 오류"});
     }
@@ -62,7 +62,7 @@ router.post('/logout', async (req, res) => {
     try {
         if (jwt.verifyToken(accessToken)) {
             // DB에서 해당 토큰 존재 여부 확인
-            const value = await db.findByValue(accessToken);
+            const value = await db.findByValue("accessToken", accessToken);
             if (value !== null) {
                 await db.updateUserInfo(accessToken, {accessToken: "null"});
                 return res.json({success: true});
