@@ -64,7 +64,7 @@ router.post('/logout', async (req, res) => {
             // DB에서 해당 토큰 존재 여부 확인
             const value = await db.findByValue("accessToken", accessToken);
             if (value !== null) {
-                await db.updateUserInfo(accessToken, {accessToken: "null"});
+                await db.updateUserInfo(accessToken, {accessToken: accessToken + ".logout"});
                 return res.json({success: true});
             }
         }
