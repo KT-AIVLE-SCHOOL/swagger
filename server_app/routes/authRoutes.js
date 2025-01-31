@@ -97,7 +97,7 @@ router.post('/register', midWare.hashPasswordToPost, async (req, res) => {
         if (value === null) {
             const { accessToken, refreshToken } = jwt.generateToken(email);
             await db.insertUserInfo({username: username, email: email, password: password, method: method, accessToken: accessToken, refreshToken: refreshToken, aliasname: null, profileimage: null});
-            await db.insertConfigInfo(accessToken, {alarm: false, dataeliminateduration: 10, coretimestart: 9, coretimeend: 18});
+            await db.insertConfigInfo(accessToken, {alarm: false, dataeliminateduration: 10});
             await db.insertBabyInfo(accessToken, {babyname: "입력해주세요", babybirth: "1990-01-01"});
             return res.json({success: true, accessToken: accessToken, refreshToken: refreshToken});
         }

@@ -20,18 +20,12 @@ GetSettingInfoSuccessResponse:
       format: date
     dataEmliminateDuration:
       type: integer
-    coreTimeStart:
-      type: integer
-    coreTimeEnd:
-      type: integer
   example:
     success: true
     alarm: true
     babyName: "abc"
     babyBirth: "2023-01-01"
     dateEliminateDuration: 15
-    coreTimeStart: 13
-    coreTimeEnd: 17
 
 ErrorResponseInvalidToken:
   type: object
