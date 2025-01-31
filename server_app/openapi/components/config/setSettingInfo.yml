@@ -12,18 +12,12 @@ SetSettingInfoRequest:
       format: date
     dataEliminateDuration:
       type: integer
-    coreTimeStart:
-      type: integer
-    coreTimeEnd:
-      type: integer
   required:
     - accessToken
     - alarm
     - babyName
     - babyBirth
     - dataEliminateDuration
-    - coreTimeStart
-    - coreTimeEnd
 
 SetSettingInfoSuccessResponse:
   type: object

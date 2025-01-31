@@ -27,8 +27,6 @@ exports.createTable = async function() {
             user_id INTEGER,
             alarm BOOLEAN NOT NULL,
             dataeliminateduration INTEGER NOT NULL,
-            coretimestart INTEGER NOT NULL,
-            coretimeend INTEGER NOT NULL,
             CONSTRAINT fk_user
                 FOREIGN KEY (user_id)
                 REFERENCES UserInfo(id)

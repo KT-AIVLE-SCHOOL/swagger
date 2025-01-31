@@ -1,6 +1,7 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const router = express.Router();
+const hutils = require('../utils/hashUtils');
 const jwt = require('../utils/jwtUtils');
 const db = require('../db/db_utils');
 
@@ -21,7 +22,7 @@ router.get('/getSettingInfo', async (req, res) => {
                 const baby = await db.findBabyInfoByUserId(value.id);
                 if (info !== null && baby !== null) {
                     return res.json({success: true, alarm: info.alarm, babyName: baby.babyname, babyBirth: baby.babybirth,
-                        dataEliminateDuration: info.dataeliminateduration, coreTimeStart: info.coretimestart, coreTimeEnd: info.coretimeend
+                        dataEliminateDuration: info.dataeliminateduration
                     });
                 }
             }
@@ -43,7 +44,7 @@ router.post('/setSettingInfo', async (req, res) => {
             // accessToken을 동일한 정보를 찾았을 경우, body를 통해 받은 설정 정보를 DB에 저장
             if (value !== null) {
                 const baby = await db.updateBabyInfo(value.id, {babyname: babyName, babybirth: babyBirth});
-                const config = await db.updateConfigInfo(value.id, {alarm: alarm, dataeliminateduration: dataEliminateDuration, coretimestart: coreTimeStart, coretimeend: coreTimeEnd});
+                const config = await db.updateConfigInfo(value.id, {alarm: alarm, dataeliminateduration: dataEliminateDuration});
 
                 if (config && baby)
                     return res.json({success: true});
@@ -191,7 +192,7 @@ router.post('/setPass', async (req, res) => {
             const value = await db.findByValue("accessToken", accessToken);
 
             if (value !== null) {
-                await db.updateConfigInfo(value.id, {password: password});
+                await db.updateUserInfo(accessToken, {password: await hutils.hashPassword(password)});
                 return res.json({success: true});
             }
             return res.status(400).json({success: false, message: "존재하지 않는 이용자"});
