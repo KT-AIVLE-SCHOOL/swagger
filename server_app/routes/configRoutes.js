@@ -1,6 +1,7 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const router = express.Router();
+const hutils = require('../utils/hashUtils');
 const jwt = require('../utils/jwtUtils');
 const db = require('../db/db_utils');
 
@@ -191,7 +192,7 @@ router.post('/setPass', async (req, res) => {
             const value = await db.findByValue("accessToken", accessToken);
 
             if (value !== null) {
-                await db.updateConfigInfo(value.id, {password: password});
+                await db.updateUserInfo(accessToken, {password: await hutils.hashPassword(password)});
                 return res.json({success: true});
             }
             return res.status(400).json({success: false, message: "존재하지 않는 이용자"});
