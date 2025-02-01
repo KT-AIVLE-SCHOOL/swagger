@@ -81,7 +81,3 @@ paths:
     $ref: './openapi/paths/dashboard/getBabyInfo.yml'
   /dashboard/getBabyEmotionInfo:
     $ref: './openapi/paths/dashboard/getBabyEmotionInfo.yml'
-  /dashboard/getBabyCoreTimeDataInfo:
-    $ref: './openapi/paths/dashboard/getBabyCoreTimeDataInfo.yml'
-  /dashboard/getBabyFrequencyInfo:
-    $ref: './openapi/paths/dashboard/getBabyFrequencyInfo.yml'
