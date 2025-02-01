@@ -18,7 +18,8 @@ router.get('/getBabyInfo', async (req, res) => {
                 const baby = await db.findBabyInfoByUserId(value.id);
 
                 if(baby!== null){
-                    return res.json({success: true, babyName: baby.babyname, babyBirth: baby.babybirth});
+                    const babyBirth = baby.babyBirth.split(" ")[0];
+                    return res.json({success: true, babyName: baby.babyname, babyBirth: babyBirth});
                 }
                 else{
                     return res.status(404).json({success: false, message: "해당 데이터가 없습니다."});
@@ -43,7 +44,7 @@ router.get('/getBabyEmotionInfo', async (req, res) => {
 
                 if(babyEmotion !== null){
                     const EmotionsMap = babyEmotion.map(emotion => ({
-                        babyEmotionTime: time.calculateDateTime(emotion.checkTime),
+                        babyEmotionTime: emotion.checkTime,
                         babyEmotionNum: emotion.emotion
                     })).reverse();
                     const babyEmotionRecentlyMap = EmotionsMap.slice(0, 15);

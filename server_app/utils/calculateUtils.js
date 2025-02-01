@@ -1,29 +1,13 @@
 exports.calculateDateTime = () => {
-    const formatter = new Intl.DateTimeFormat('ko-KR', {
-        timezone: 'ASIA/Seoul',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-    });
+    const date = new Date();
+    const pad = (num) => String(num).padStart(2, '0');
 
-    return formatter.format(new Date());
-}
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1);
+    const day = pad(date.getDate());
+    const hour = pad(date.getHours());
+    const min = pad(date.getMinutes());
+    const sec = pad(date.getSeconds());
 
-exports.calculateDateTime = (time) => {
-    const formatter = new Intl.DateTimeFormat('ko-KR', {
-        timezone: 'ASIA/Seoul',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-    });
-
-    return formatter.format(time);
+    return `${year}-${month}-${day} ${hour}-${min}-${sec}`;
 }

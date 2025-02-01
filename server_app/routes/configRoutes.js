@@ -35,13 +35,11 @@ router.get('/getSettingInfo', async (req, res) => {
 });
 
 router.post('/setSettingInfo', async (req, res) => {
-    const {accessToken, alarm, babyName, babyBirth, dataEliminateDuration, coreTimeStart, coreTimeEnd} = req.body;
+    const {accessToken, alarm, babyName, babyBirth, dataEliminateDuration} = req.body;
 
     try {
         if (jwt.verifyToken(accessToken)) {
-            // DB에서 accessToken 존재 여부 확인
             const value = await db.findByValue("accessToken", accessToken);
-            // accessToken을 동일한 정보를 찾았을 경우, body를 통해 받은 설정 정보를 DB에 저장
             if (value !== null) {
                 const baby = await db.updateBabyInfo(value.id, {babyname: babyName, babybirth: babyBirth});
                 const config = await db.updateConfigInfo(value.id, {alarm: alarm, dataeliminateduration: dataEliminateDuration});

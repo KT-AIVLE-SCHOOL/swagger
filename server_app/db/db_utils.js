@@ -49,7 +49,7 @@ exports.createTable = async function() {
             id SERIAL PRIMARY KEY,
             user_id INTEGER,
             babyname TEXT NOT NULL,
-            babybirth TIMESTAMP NOT NULL,
+            babybirth TEXT NOT NULL,
             CONSTRAINT fk_user
                 FOREIGN KEY (user_id)
                 REFERENCES UserInfo(id)
@@ -60,7 +60,7 @@ exports.createTable = async function() {
             id SERIAL PRIMARY KEY,
             user_id INTEGER,
             baby_id INTEGER,
-            checktime TIMESTAMP NOT NULL,
+            checktime TEXT NOT NULL,
             emotion INTEGER NOT NULL,
             CONSTRAINT fk_user
                 FOREIGN KEY (user_id)
