@@ -1,5 +1,5 @@
 get:
-  summary: 최근 정보(날짜, 시간, 감정), MAX 3
+  summary: 최근 판단한 아이 감정(최대 15개) 및 시간대 별 최다 빈도 아이 감정
   tags:
     - dashboard
   parameters:
