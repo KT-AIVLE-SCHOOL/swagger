@@ -4,7 +4,7 @@ get:
     - admin
   parameters:
     $ref: '../../components/admin/readNotice.yml#/ReadNoticeParameters'
-  properties:
+  responses:
     '200':
       description: 본문 보고 성공
       content:
