@@ -1,0 +1,47 @@
+PostEmotionRequest:
+  type: object
+  properties:
+    accessToken:
+      type: string
+    emotion:
+      type: integer
+  required:
+    - accessToken
+    - emotion
+
+SuccessResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+
+ErrorResponseBadRequest:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: 유효하지 않은 인증수단
+
+ErrorResponseNotFound:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: 유아 정보가 없음
+
+ErrorResponseInternalServer:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: 내부 서버 오류

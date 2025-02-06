@@ -51,7 +51,7 @@ paths:
     $ref: './openapi/paths/config/getSettingInfo.yml'
   /config/setSettingInfo:
     $ref: './openapi/paths/config/setSettingInfo.yml'
-  /config/getPeronalInfo:
+  /config/getPersonalInfo:
     $ref: './openapi/paths/config/getPersonalInfo.yml'
   /config/logout:
     $ref: './openapi/paths/config/logout.yml'
@@ -81,3 +81,5 @@ paths:
     $ref: './openapi/paths/dashboard/getBabyInfo.yml'
   /dashboard/getBabyEmotionInfo:
     $ref: './openapi/paths/dashboard/getBabyEmotionInfo.yml'
+  /emotion/postEmotion:
+    $ref: './openapi/paths/emotion/postEmotion.yml'

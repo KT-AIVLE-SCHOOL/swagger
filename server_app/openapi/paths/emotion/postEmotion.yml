@@ -1,0 +1,35 @@
+post:
+  summary: 아이 감정 측정 결과 최신화
+  tags:
+    - emoteai
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/emoteai/postEmotion.yml#/PostEmotionRequest'
+  responses:
+    '200':
+      description: 저장 성공
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/emoteai/postEmotion.yml#/SuccessResponse'
+    '400':
+      description: 유효하지 않은 인증수단
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/emoteai/postEmotion.yml#/ErrorResponseBadRequest'
+    '404':
+      description: 정보 미등록
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/emoteai/postEmotion.yml#/ErrorResponseNotFound'
+    '500':
+      description: 내부 서버 오류
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/emoteai/postEmotion.yml#/ErrorResponseInternalServer'
